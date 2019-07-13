@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     #
     'apps.user',
     'apps.movie',
+    'silk',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE += [  # noqa: F405
+    'silk.middleware.SilkyMiddleware',
+]
+
+INTERNAL_IPS = '127.0.0.1'
+
 
 ROOT_URLCONF = 'mymdb.urls'
 
