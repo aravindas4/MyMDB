@@ -37,6 +37,10 @@ class Movie(Base):
         else:
             return f'{self.title}'
 
+    @property
+    def name(self):
+        return str(self)
+
 
 class MovieImage(Base, OrderedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

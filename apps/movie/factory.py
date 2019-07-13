@@ -14,7 +14,7 @@ class MovieFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Movie
 
-    title = factory.Faker('title')
+    title = factory.Faker('word')
     plot = factory.Faker('paragraph')
     date = fake.past_datetime(start_date="-120y", tzinfo=None).date()
     runtime = factory.fuzzy.FuzzyChoice([90, 150])
