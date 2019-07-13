@@ -1,10 +1,11 @@
+import uuid
 from django.db import models
-from django.utils.translation import gettext as _
-from model_utils.models import SoftDeletableModel, TimeStampedModel
+from model_utils.models import TimeStampedModel
 
 
-
-class Base(SoftDeletableModel, TimeStampedModel):
+class Base(TimeStampedModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                          editable=False)
     created_by = models.CharField(max_length=250, null=True, blank=True)
     modified_by = models.CharField(max_length=250, null=True, blank=True)
 

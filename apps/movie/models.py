@@ -20,20 +20,22 @@ class Movie(Base):
 
     title = models.CharField(_('title'), max_length=255)
     plot = models.TextField(_('plot'), blank=True)
-    date = models.DateField(_('date'), null=True, blank=True)
+    date = models.DateField(_('release date'), null=True, blank=True)
     runtime = models.PositiveSmallIntegerField(_('runtime in mins'),
                                                null=True, blank=True)
-    webiste = models.URLField(_('webiste'), null=True, blank=True)
+    website = models.URLField(_('website'), null=True, blank=True)
     rating = models.PositiveSmallIntegerField(_('rating'),
-                                              choices=RATING_TYPE,
-                                              )
+                                              choices=RATING_TYPE)
 
     class Meta:
         verbose_name = 'Movie'
         verbose_name_plural = 'Movies'
 
     def __str__(self):
-        return f'{self.title} ({self.date.year})'
+        if self.date:
+            return f'{self.title} ({self.date.year})'
+        else:
+            return f'{self.title}'
 
 
 class MovieImage(Base, OrderedModel):
@@ -73,7 +75,29 @@ class MoviePerson(Base):
     )
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    role = models.PositiveIntegerField(_('role'), choices=ROLE, blank=True,
+                                       null=True)
+    detail = models.CharField(_('role detail'), null=True, blank=True,
+                              max_length=255)
 
     class Meta:
         verbose_name = 'Movie Person'
         verbose_name_plural = 'Movie Persons'
+
+
+class Vote(Base):
+    VOTE_TYPE = Choices(
+        const.VOTE_UP,
+        const.VOTE_DOWN
+    )
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    vote = models.PositiveSmallIntegerField(_('Vote'), choices=VOTE_TYPE,
+                                            null=True)
+
+    class Meta:
+        verbose_name = 'Vote'
+        verbose_name_plural = 'Votes'
+
+    def __str__(self):
+        return f'{self.user}: {self.movie} - {self.vote}'

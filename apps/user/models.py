@@ -27,21 +27,3 @@ class User(AbstractUser):
 
     def logout(self):
         MultiToken.objects.filter(user_id=self.id).delete()
-
-
-class Vote(Base, OrderedModel):
-    VOTE_TYPE = Choices(
-        const.VOTE_UP,
-        const.VOTE_DOWN
-    )
-    movie = models.ForeignKey('movie.Movie', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    vote = models.PositiveSmallIntegerField(_('Vote'), choices=VOTE_TYPE,
-                                            null=True)
-
-    class Meta:
-        verbose_name = 'Vote'
-        verbose_name_plural = 'Votes'
-
-    def __str__(self):
-        return f'{self.user}: {self.movie} - {self.vote}'
