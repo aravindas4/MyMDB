@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.contrib import admin
 
 
@@ -13,8 +12,3 @@ class DynamicColumnAdmin(admin.ModelAdmin):
         self.list_display = field_list
         self.list_display_links = field_list
 
-
-my_app = apps.get_app_config('user')
-
-for model in list(my_app.get_models()):
-    admin.site.register(model, DynamicColumnAdmin)
