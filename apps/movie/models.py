@@ -67,8 +67,24 @@ class Person(Base):
         verbose_name = 'Person'
         verbose_name_plural = 'Persons'
 
-    def __str(self):
+    def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    @property
+    def name(self):
+        return str(self)
+
+
+class MoviePersonQueryset(models.QuerySet):
+
+    def actors(self):
+        return self.filter(role=MoviePerson.ROLE.ACTOR)
+
+    def directors(self):
+        return self.filter(role=MoviePerson.ROLE.DIRECTOR)
+
+    def writers(self):
+        return self.filter(role=MoviePerson.ROLE.WRITER)
 
 
 class MoviePerson(Base):
@@ -83,6 +99,8 @@ class MoviePerson(Base):
                                        null=True)
     detail = models.CharField(_('role detail'), null=True, blank=True,
                               max_length=255)
+
+    objects = MoviePersonQueryset.as_manager()
 
     class Meta:
         verbose_name = 'Movie Person'
