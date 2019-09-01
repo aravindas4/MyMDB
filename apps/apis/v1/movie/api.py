@@ -4,12 +4,17 @@ from rest_framework.viewsets import ModelViewSet
 
 from .serializers import MovieModelSerializer, PersonDetailSerializer, \
     PersonListSerialiazer
-from apps.movie.models import Movie, Person, MoviePerson
+from apps.movie.models import Movie, Person, MoviePerson, MovieImage, Vote
 
 
 class MovieModelViewSet(ModelViewSet):
     serializer_class = MovieModelSerializer
-    queryset = Movie.objects.all()
+    queryset = Movie.objects.prefetch_related(
+        Prefetch(
+            'movieimage_set',
+            queryset=MovieImage.objects.select_related('user')
+        )
+    )
 
 
 class PersonModelViewSet(ModelViewSet):
@@ -21,9 +26,19 @@ class PersonModelViewSet(ModelViewSet):
             return self.queryset.prefetch_related(
                 Prefetch(
                     'movieperson_set',
-                    queryset=MoviePerson.objects.select_related('movie')
+                    queryset=MoviePerson.objects.select_related('movie')\
+                        .prefetch_related(
+                        Prefetch(
+                            'movie__movieimage_set',
+                            queryset=MovieImage.objects.select_related('user')
+                        ), Prefetch(
+                            'movie__vote_set',
+                            queryset=Vote.objects.select_related('user')
+                        )
+                    )
                 )
             )
+            # return self.queryset
         return self.queryset
 
     def get_serializer_class(self):

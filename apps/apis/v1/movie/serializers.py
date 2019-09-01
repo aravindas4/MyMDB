@@ -3,23 +3,45 @@ from rest_framework import serializers
 from apps.movie import models
 from apps.utils.serializers import ChoicesField
 
+from apps.apis.v1.user.serializers import UserModelSerializer
+
+
+class MovieImageModelSerializer(serializers.ModelSerializer):
+    user = UserModelSerializer()
+
+    class Meta:
+        model = models.MovieImage
+        fields = ('id', 'user', 'path')
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    vote = ChoicesField(choices=models.Vote.VOTE_TYPE)
+    user = UserModelSerializer()
+
+    class Meta:
+        model = models.Vote
+        fields = ('id', 'user', 'vote')
+
 
 class MovieModelSerializer(serializers.ModelSerializer):
     rating = ChoicesField(choices=models.Movie.RATING_TYPE)
+    images = MovieImageModelSerializer(source='movieimage_set', many=True)
+    votes = VoteSerializer(source='vote_set', many=True)
 
     class Meta:
         model = models.Movie
-        fields = ('id', 'name', 'plot', 'rating')
+        fields = ('id', 'name', 'plot', 'rating', 'images', 'votes')
 
 
 class MoviePersonModelSerializer(serializers.ModelSerializer):
-    movie_name = serializers.CharField(source='movie.name')
-    movie_id = serializers.CharField(source='movie.id')
+    # movie_name = serializers.CharField(source='movie.name')
+    # movie_id = serializers.CharField(source='movie.id')
+    movie = MovieModelSerializer()
     role = ChoicesField(choices=models.MoviePerson.ROLE)
 
     class Meta:
         model = models.MoviePerson
-        fields = ('movie_name', 'role', 'movie_id')
+        fields = ('movie', 'role', ) #'movie_id')
 
 
 class PersonListSerialiazer(serializers.ModelSerializer):

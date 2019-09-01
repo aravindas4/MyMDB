@@ -47,11 +47,11 @@ INSTALLED_APPS = [
 
     #3rd party
     'tokens',
+    'silk',
 
     #
     'apps.user',
     'apps.movie',
-    'silk',
 ]
 
 MIDDLEWARE = [
