@@ -1,4 +1,5 @@
 # MyMDB
+This is a REST impelementations of django project at https://github.com/tomaratyn/MyMDB. Certain design modification have also been done based on the industry experiance.
 
 ### Software
 
