@@ -24,24 +24,18 @@ class VoteSerializer(serializers.ModelSerializer):
 
 
 class MovieModelSerializer(serializers.ModelSerializer):
-    rating = ChoicesField(choices=models.Movie.RATING_TYPE)
-    images = MovieImageModelSerializer(source='movieimage_set', many=True)
-    votes = VoteSerializer(source='vote_set', many=True)
 
     class Meta:
         model = models.Movie
-        fields = ('id', 'name', 'plot', 'rating', 'images', 'votes')
+        fields = ('id', 'name')
 
 
 class MoviePersonModelSerializer(serializers.ModelSerializer):
-    # movie_name = serializers.CharField(source='movie.name')
-    # movie_id = serializers.CharField(source='movie.id')
     movie = MovieModelSerializer()
-    role = ChoicesField(choices=models.MoviePerson.ROLE)
 
     class Meta:
         model = models.MoviePerson
-        fields = ('movie', 'role', ) #'movie_id')
+        fields = ('movie', 'detail')
 
 
 class PersonListSerialiazer(serializers.ModelSerializer):
@@ -72,3 +66,11 @@ class PersonDetailSerializer(serializers.ModelSerializer):
     def get_writer(self, obj):
         return MoviePersonModelSerializer(obj.movieperson_set.writers(),
                                           many=True).data
+
+
+class MovieDetailSerializer(serializers.ModelSerializer):
+    rating = ChoicesField(choices=models.Movie.RATING_TYPE)
+
+    class Meta:
+        model = models.Movie
+        fields = ('id', 'name', 'plot', 'rating')
