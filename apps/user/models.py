@@ -11,6 +11,8 @@ from model_utils import Choices
 
 
 class User(AbstractUser):
+    photograph = models.CharField(_('photograph'), null=True,
+                                  max_length=255)
 
     class Meta:
         verbose_name = 'User'
