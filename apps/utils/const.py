@@ -2,8 +2,8 @@
 vote_up = 'VOTE UP'
 vote_down = 'VOTE DOWN'
 
-VOTE_UP = (0, 'UP', vote_up)
-VOTE_DOWN = (1, 'DOWN', vote_down)
+VOTE_UP = (1, 'UP', vote_up)
+VOTE_DOWN = (-1, 'DOWN', vote_down)
 
 not_rated = 'Not Rated'
 rated_g = 'General Audiences'

@@ -16,11 +16,15 @@ class MovieImageModelSerializer(serializers.ModelSerializer):
 
 class VoteSerializer(serializers.ModelSerializer):
     vote = ChoicesField(choices=models.Vote.VOTE_TYPE)
-    user = UserModelSerializer()
 
     class Meta:
         model = models.Vote
-        fields = ('id', 'user', 'vote')
+        fields = ('id', 'user', 'vote', 'movie')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['user'] = request.user
+        return super().create(validated_data)
 
 
 class MovieModelSerializer(serializers.ModelSerializer):
@@ -70,7 +74,10 @@ class PersonDetailSerializer(serializers.ModelSerializer):
 
 class MovieDetailSerializer(serializers.ModelSerializer):
     rating = ChoicesField(choices=models.Movie.RATING_TYPE)
+    votes = VoteSerializer(source='vote_set', many=True)
+    score = serializers.DecimalField(max_digits=5, decimal_places=2,
+                                     read_only=True)
 
     class Meta:
         model = models.Movie
-        fields = ('id', 'name', 'plot', 'rating')
+        fields = ('id', 'name', 'plot', 'rating', 'votes', 'score')

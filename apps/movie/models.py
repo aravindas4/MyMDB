@@ -41,6 +41,10 @@ class Movie(Base):
     def name(self):
         return str(self)
 
+    @property
+    def score(self):
+        return self.vote_set.aggregate(score=models.Sum('vote'))['score']
+
 
 class MovieImage(Base, OrderedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -120,6 +124,10 @@ class Vote(Base):
     class Meta:
         verbose_name = 'Vote'
         verbose_name_plural = 'Votes'
+        constraints = [
+            models.UniqueConstraint(fields=['movie', 'user', 'vote'],
+                                    name='unique_voting')
+        ]
 
     def __str__(self):
         return f'{self.user}: {self.movie} - {self.vote}'
