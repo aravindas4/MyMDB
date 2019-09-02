@@ -3,23 +3,43 @@ from rest_framework import serializers
 from apps.movie import models
 from apps.utils.serializers import ChoicesField
 
+from apps.apis.v1.user.serializers import UserModelSerializer
+
+
+class MovieImageModelSerializer(serializers.ModelSerializer):
+    user = UserModelSerializer()
+
+    class Meta:
+        model = models.MovieImage
+        fields = ('id', 'user', 'path')
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    vote = ChoicesField(choices=models.Vote.VOTE_TYPE)
+
+    class Meta:
+        model = models.Vote
+        fields = ('id', 'user', 'vote', 'movie')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['user'] = request.user
+        return super().create(validated_data)
+
 
 class MovieModelSerializer(serializers.ModelSerializer):
-    rating = ChoicesField(choices=models.Movie.RATING_TYPE)
 
     class Meta:
         model = models.Movie
-        fields = ('id', 'name', 'plot', 'rating')
+        fields = ('id', 'name')
 
 
 class MoviePersonModelSerializer(serializers.ModelSerializer):
-    movie_name = serializers.CharField(source='movie.name')
-    movie_id = serializers.CharField(source='movie.id')
-    role = ChoicesField(choices=models.MoviePerson.ROLE)
+    movie = MovieModelSerializer()
 
     class Meta:
         model = models.MoviePerson
-        fields = ('movie_name', 'role', 'movie_id')
+        fields = ('movie', 'detail')
 
 
 class PersonListSerialiazer(serializers.ModelSerializer):
@@ -50,3 +70,14 @@ class PersonDetailSerializer(serializers.ModelSerializer):
     def get_writer(self, obj):
         return MoviePersonModelSerializer(obj.movieperson_set.writers(),
                                           many=True).data
+
+
+class MovieDetailSerializer(serializers.ModelSerializer):
+    rating = ChoicesField(choices=models.Movie.RATING_TYPE)
+    votes = VoteSerializer(source='vote_set', many=True)
+    score = serializers.DecimalField(max_digits=5, decimal_places=2,
+                                     read_only=True)
+
+    class Meta:
+        model = models.Movie
+        fields = ('id', 'name', 'plot', 'rating', 'votes', 'score')

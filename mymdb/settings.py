@@ -45,13 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #3rd party
+    # 3rd party
+    'rest_framework',
     'tokens',
+    'silk',
 
     #
     'apps.user',
     'apps.movie',
-    'silk',
 ]
 
 MIDDLEWARE = [
